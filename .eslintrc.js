@@ -23,6 +23,9 @@ module.exports = {
     "prettier/prettier": ["error",{
       "endOfLine": "auto"}
     ],
-    "requireForBlockBody": "as-needed"
+    "@typescript-eslint/no-unused-vars": ["error", { "args": "none" }],
+    "prettier/prettier": ["error", {}, {
+      "usePrettierrc": false
+    }]
   },
 };
