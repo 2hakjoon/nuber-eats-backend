@@ -4,6 +4,7 @@ import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { RestaurantsModule } from "./restaurants/restaurants.module";
+import { Restaurant } from "./restaurants/entities/restaurant.enetity";
 
 @Module({
   imports: [
@@ -25,8 +26,9 @@ import { RestaurantsModule } from "./restaurants/restaurants.module";
     }),
     TypeOrmModule.forRoot({
       type: "postgres",
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== "prod",
       logging: true,
+      entities: [Restaurant],
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
