@@ -3,8 +3,7 @@ import * as Joi from "joi";
 import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { RestaurantsModule } from "./restaurants/restaurants.module";
-import { Restaurant } from "./restaurants/entities/restaurant.entity";
+import { UsersModule } from "./users/users.module";
 
 @Module({
   imports: [
@@ -28,14 +27,13 @@ import { Restaurant } from "./restaurants/entities/restaurant.entity";
       type: "postgres",
       synchronize: process.env.NODE_ENV !== "prod",
       logging: true,
-      entities: [Restaurant],
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
     }),
-    RestaurantsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
