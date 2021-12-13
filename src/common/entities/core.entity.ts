@@ -2,7 +2,7 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
+} from 'typeorm';
 
 export class CoreEntity {
   @PrimaryGeneratedColumn()
