@@ -20,17 +20,9 @@ export class UsersResolver {
     @Args('input') _createAccountInput: createAccountInput,
   ): Promise<CreateAccountOutput> {
     try {
-      const error = await this.usersService.createAccount(_createAccountInput);
-      if (error) {
-        return {
-          ok: false,
-          error,
-        };
-      } else {
-        return {
-          ok: true,
-        };
-      }
+      const result = await this.usersService.createAccount(_createAccountInput);
+
+      return result;
     } catch (e) {
       return {
         error: e,
