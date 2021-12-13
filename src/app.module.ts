@@ -4,6 +4,8 @@ import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersModule } from "./users/users.module";
+import { CommonModule } from "./common/common.module";
+import { User } from "./users/entities/user.entity";
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { UsersModule } from "./users/users.module";
       type: "postgres",
       synchronize: process.env.NODE_ENV !== "prod",
       logging: true,
+      entities: [User],
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
@@ -34,6 +37,7 @@ import { UsersModule } from "./users/users.module";
       database: process.env.DB_DATABASE,
     }),
     UsersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
