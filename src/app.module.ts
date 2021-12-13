@@ -38,7 +38,9 @@ import { JwtModule } from './jwt/jwt.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
     }),
-    JwtModule.forRoot(),
+    JwtModule.forRoot({
+      secretKey: process.env.SECRET_KEY,
+    }),
     UsersModule,
     CommonModule,
   ],
