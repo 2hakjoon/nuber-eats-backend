@@ -54,7 +54,10 @@ export class UsersService {
     // check if the password is correct
     // make a JWT and give it to the user
     try {
-      const user = await this.users.findOne({ email });
+      const user = await this.users.findOne(
+        { email },
+        { select: ['id', 'password'] },
+      );
       if (!user) {
         return {
           ok: false,
