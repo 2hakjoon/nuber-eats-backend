@@ -91,7 +91,12 @@
     "testEnvironment": "node",
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/src/$1"
-    }
+    },
+    "coveragePathIgnorePatterns":[
+      "node_modules",
+      ".entity.ts",
+      ".contstants.ts"
+    ]
   },
   "husky": {
     "hooks": {
