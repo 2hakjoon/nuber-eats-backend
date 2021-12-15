@@ -54,13 +54,26 @@ describe('UserService', () => {
     usersRepository = module.get(getRepositoryToken(User));
   });
 
-
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
   describe('crateAccount', () => {
-    it('should fail if user exists', () => {});
+    it('should fail if user exists', async () => {
+      usersRepository.findOne.mockResolvedValue({
+        id: 1,
+        email: 'asdf',
+      });
+      const result = await service.createAccount({
+        email: '',
+        password: '',
+        role: 0,
+      });
+      expect(result).toMatchObject({
+        ok: false,
+        error: 'There is a user with that email already',
+      });
+    });
   });
 
   it.todo('createAccount');
