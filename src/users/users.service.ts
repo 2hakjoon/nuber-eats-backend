@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { createAccountInput } from './dtos/create-account.dto';
-import { LoginInput } from './dtos/login.dto';
+import {
+  CreateAccountInput,
+  CreateAccountOutput,
+} from './dtos/create-account.dto';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
-import { EditProfileInput } from './dtos/edit-profile.dto';
+import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
+import { UserProfileOutput } from './dtos/user-profile.dto';
+import { VerifyEmailOutput } from './dtos/verify-email.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +26,7 @@ export class UsersService {
     email,
     password,
     role,
-  }: createAccountInput): Promise<{ ok: boolean; error: string | null }> {
+  }: CreateAccountInput): Promise<CreateAccountOutput> {
     //check new user
     try {
       const exists = await this.users.findOne({ email });
@@ -45,11 +50,7 @@ export class UsersService {
     //create user && password hashing
   }
 
-  async login({ email, password }: LoginInput): Promise<{
-    ok: boolean;
-    error: string | null;
-    token?: string;
-  }> {
+  async login({ email, password }: LoginInput): Promise<LoginOutput> {
     // find the user with the email
     // check if the password is correct
     // make a JWT and give it to the user
@@ -86,35 +87,76 @@ export class UsersService {
       };
     }
   }
-  async findUserById(id: number): Promise<User> {
-    return this.users.findOne({ id });
+  async findUserById(id: number): Promise<UserProfileOutput> {
+    try {
+      const user = await this.users.findOne({ id });
+      if (user) {
+        return {
+          ok: true,
+          user,
+        };
+      } else {
+        throw Error;
+      }
+    } catch (e) {
+      return {
+        ok: false,
+        error: 'User Not Found',
+      };
+    }
   }
 
   async editProfile(
     userId: number,
     { email, password }: EditProfileInput,
-  ): Promise<User> {
-    const user = await this.users.findOne(userId);
-    if (email) {
-      user.email = email;
-      user.emailVerified = false;
-      await this.verification.create();
+  ): Promise<EditProfileOutput> {
+    try {
+      //존재하는 회원인지 조화
+      const user = await this.users.findOne(userId);
+      //인자에 이메일이 있을시 실행
+      if (email) {
+        user.email = email;
+        //이메일 수정시 검증코드 생성
+        user.emailVerified = false;
+        await this.verification.create();
+      }
+      //인자에 비밀번호가 있을시
+      if (password) {
+        user.password = password;
+      }
+      //유저정보 업데이트
+      await this.users.save(user);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: "Couldn't edit profile",
+      };
     }
-    if (password) {
-      user.password = password;
-    }
-    return this.users.save(user);
   }
 
-  async verifyEmail(code: string): Promise<boolean> {
-    const verification = await this.verification.findOne(
-      { code },
-      { relations: ['user'] },
-    );
-    if (verification) {
-      verification.user.emailVerified = true;
-      this.users.save(verification.user);
+  async verifyEmail(code: string): Promise<VerifyEmailOutput> {
+    try {
+      const verification = await this.verification.findOne(
+        { code },
+        { relations: ['user'] },
+      );
+      if (verification) {
+        verification.user.emailVerified = true;
+        this.users.save(verification.user);
+        return {
+          ok: true,
+        };
+      } else {
+        throw Error;
+      }
+    } catch (e) {
+      return {
+        ok: false,
+        error: 'Wrong email code',
+      };
     }
-    return false;
   }
 }
