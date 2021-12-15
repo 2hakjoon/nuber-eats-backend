@@ -8,18 +8,18 @@ import { MailModuleOptions } from './mail.interfaces';
 export class MailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
-  ) {
-    this.sendEmail('testing', 'test');
-  }
-  private async sendEmail(subject: string, content: string) {
+  ) {}
+  private async sendEmail(subject: string, content: string, email: string) {
     const form = new FormData();
-    form.append('from', `Excited User <mailgun@${this.options.domain}>`);
-    form.append('to', `2hakjoon@gmail.com`);
+    form.append(
+      'from',
+      `[Nuber Eats] Verify Request <mailgun@${this.options.domain}>`,
+    );
+    form.append('to', email);
     form.append('subject', subject);
     form.append('text', content);
-    const response = await got(
-      `https://api.mailgun.net/v3/${this.options.domain}/messages`,
-      {
+    try {
+      await got(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
         method: 'POST',
         headers: {
           Authorization: `Basic ${Buffer.from(
@@ -27,7 +27,13 @@ export class MailService {
           ).toString('base64')}`,
         },
         body: form,
-      },
-    );
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  sendVerificationEmail(email: string, code: string) {
+    this.sendEmail('Verify Your Email', code, email);
   }
 }
