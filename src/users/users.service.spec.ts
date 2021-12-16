@@ -19,9 +19,9 @@ const mockJwtService = {
   verify: jest.fn(),
 };
 
-const mockMailService = {
+const mockMailService = () => ({
   sendVerificationEmail: jest.fn(),
-};
+});
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
@@ -50,7 +50,7 @@ describe('UserService', () => {
         },
         {
           provide: MailService,
-          useValue: mockMailService,
+          useValue: mockMailService(),
         },
       ],
     }).compile();
@@ -211,6 +211,49 @@ describe('UserService', () => {
       });
     });
   });
-  it.todo('editProfile');
+
+  describe('editProfile', () => {
+    it('should change email', async () => {
+      const oldUser = {
+        email: 'old@gmail.com',
+        emailVerified: true,
+      };
+
+      const editProfileArgs = {
+        userId: 1,
+        input: {
+          email: 'new@gmail.com',
+        },
+      };
+
+      const newVerification = {
+        code: 'code',
+      };
+
+      const newUser = {
+        emailVerified: false,
+        email: editProfileArgs.input.email,
+      };
+
+      usersRepository.findOne.mockResolvedValue(oldUser);
+
+      verificationsRepository.create.mockReturnValue(newVerification);
+
+      await service.editProfile(editProfileArgs.userId, editProfileArgs.input);
+
+      expect(usersRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(usersRepository.findOne).toHaveBeenCalledWith(1);
+
+      expect(verificationsRepository.create).toHaveBeenCalled();
+
+      expect(emailService.sendVerificationEmail).toHaveBeenCalledTimes(1);
+      expect(emailService.sendVerificationEmail).toHaveBeenCalledWith(
+        newUser.email,
+        newVerification.code,
+      );
+
+      expect(usersRepository.save).toHaveBeenCalledWith(newUser);
+    });
+  });
   it.todo('verifyEmail');
 });
