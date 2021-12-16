@@ -145,17 +145,21 @@ export class UsersService {
       );
       if (verification) {
         verification.user.emailVerified = true;
-        this.users.save(verification.user);
+        await this.users.save(verification.user);
+        await this.verification.delete(verification.id);
         return {
           ok: true,
         };
       } else {
-        throw Error;
+        return {
+          ok: false,
+          error: 'Wrong email code',
+        };
       }
     } catch (e) {
       return {
         ok: false,
-        error: 'Wrong email code',
+        error: "Couldn't verify email",
       };
     }
   }

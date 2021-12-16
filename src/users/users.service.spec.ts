@@ -10,14 +10,15 @@ import { UsersService } from './users.service';
 const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
+  delete: jest.fn(),
   create: jest.fn(),
   findOneOrFail: jest.fn(),
 });
 
-const mockJwtService = {
+const mockJwtService = () => ({
   sign: jest.fn(() => 'token'),
   verify: jest.fn(),
-};
+});
 
 const mockMailService = () => ({
   sendVerificationEmail: jest.fn(),
@@ -46,7 +47,7 @@ describe('UserService', () => {
         },
         {
           provide: JwtService,
-          useValue: mockJwtService,
+          useValue: mockJwtService(),
         },
         {
           provide: MailService,
@@ -239,7 +240,10 @@ describe('UserService', () => {
 
       verificationsRepository.create.mockReturnValue(newVerification);
 
-      await service.editProfile(editProfileArgs.userId, editProfileArgs.input);
+      const result = await service.editProfile(
+        editProfileArgs.userId,
+        editProfileArgs.input,
+      );
 
       expect(usersRepository.findOne).toHaveBeenCalledTimes(1);
       expect(usersRepository.findOne).toHaveBeenCalledWith(1);
@@ -253,7 +257,102 @@ describe('UserService', () => {
       );
 
       expect(usersRepository.save).toHaveBeenCalledWith(newUser);
+
+      expect(result).toEqual({ ok: true });
+    });
+
+    it('should change password', async () => {
+      const oldUser = {
+        password: 'old',
+      };
+
+      const editProfileArgs = {
+        userId: 1,
+        input: {
+          password: 'new',
+        },
+      };
+      usersRepository.findOne.mockResolvedValue(oldUser);
+
+      const result = await service.editProfile(
+        editProfileArgs.userId,
+        editProfileArgs.input,
+      );
+
+      expect(usersRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(usersRepository.findOne).toHaveBeenLastCalledWith(
+        editProfileArgs.userId,
+      );
+
+      expect(usersRepository.save).toHaveBeenCalledTimes(1);
+      expect(usersRepository.save).toHaveBeenCalledWith({
+        ...oldUser,
+        password: editProfileArgs.input.password,
+      });
+      expect(result).toEqual({ ok: true });
+    });
+
+    it('sholud fail on exection', async () => {
+      usersRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.editProfile(1, {});
+      expect(result).toEqual({
+        ok: false,
+        error: "Couldn't edit profile",
+      });
     });
   });
-  it.todo('verifyEmail');
+  describe('verifyEmail', () => {
+    it('should verify email', async () => {
+      const mockedVerification = {
+        user: {
+          emailVerified: false,
+        },
+        id: 1,
+      };
+
+      const code = 'code';
+
+      verificationsRepository.findOne.mockResolvedValue(mockedVerification);
+      const result = await service.verifyEmail(code);
+      expect(verificationsRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(verificationsRepository.findOne).toHaveBeenCalledWith(
+        { code },
+        expect.any(Object),
+      );
+
+      expect(usersRepository.save).toHaveBeenCalledTimes(1);
+      expect(usersRepository.save).toHaveBeenCalledWith({
+        emailVerified: true,
+      });
+
+      expect(verificationsRepository.delete).toHaveBeenCalledTimes(1);
+      expect(verificationsRepository.delete).toHaveBeenCalledWith(
+        mockedVerification.id,
+      );
+
+      expect(result).toEqual({
+        ok: true,
+      });
+    });
+    it('should fail on verification', async () => {
+      const code = 'code';
+      verificationsRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.verifyEmail(code);
+
+      expect(result).toEqual({
+        ok: false,
+        error: 'Wrong email code',
+      });
+    });
+    it('should fail on exception', async () => {
+      const code = 'code';
+      verificationsRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.verifyEmail(code);
+
+      expect(result).toEqual({
+        ok: false,
+        error: "Couldn't verify email",
+      });
+    });
+  });
 });
