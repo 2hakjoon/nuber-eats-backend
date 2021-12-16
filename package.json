@@ -95,7 +95,7 @@
     "coveragePathIgnorePatterns":[
       "node_modules",
       ".entity.ts",
-      ".contstants.ts"
+      ".constants.ts"
     ]
   },
   "husky": {
