@@ -11,6 +11,7 @@ const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
+  findOneOrFail: jest.fn(),
 });
 
 const mockJwtService = {
@@ -182,9 +183,34 @@ describe('UserService', () => {
       expect(result).toEqual({ ok: false, error: "Couldn't login" });
     });
   });
-  it.todo('createAccount');
-  it.todo('login');
-  it.todo('findUserById');
+
+  describe('findUserById', () => {
+    const findByIdArgs = {
+      id: 1,
+    };
+
+    it('should return UserData if user exist', async () => {
+      usersRepository.findOneOrFail.mockResolvedValue(findByIdArgs);
+      const result = await service.findUserById(findByIdArgs.id);
+      expect(usersRepository.findOneOrFail).toHaveBeenCalled();
+      expect(usersRepository.findOneOrFail).toHaveBeenCalledWith(findByIdArgs);
+      expect(result).toEqual({
+        ok: true,
+        user: findByIdArgs,
+      });
+    });
+
+    it('should fail if user does not exist', async () => {
+      usersRepository.findOneOrFail.mockRejectedValue(new Error());
+      const result = await service.findUserById(findByIdArgs.id);
+      expect(usersRepository.findOneOrFail).toHaveBeenCalled();
+      expect(usersRepository.findOneOrFail).toHaveBeenCalledWith(findByIdArgs);
+      expect(result).toEqual({
+        ok: false,
+        error: 'User Not Found',
+      });
+    });
+  });
   it.todo('editProfile');
   it.todo('verifyEmail');
 });
