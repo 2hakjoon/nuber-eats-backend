@@ -83,10 +83,10 @@ export class UsersService {
           };
         }
       }
-    } catch (error) {
+    } catch (e) {
       return {
         ok: false,
-        error,
+        error: "Couldn't login",
       };
     }
   }
