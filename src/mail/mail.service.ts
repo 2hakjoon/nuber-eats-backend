@@ -9,7 +9,7 @@ export class MailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
   ) {}
-  private async sendEmail(subject: string, content: string, email: string) {
+  async sendEmail(subject: string, email: string, content: string) {
     const form = new FormData();
     form.append(
       'from',
@@ -34,6 +34,6 @@ export class MailService {
   }
 
   sendVerificationEmail(email: string, code: string) {
-    this.sendEmail('Verify Your Email', code, email);
+    this.sendEmail('Verify Your Email', email, code);
   }
 }
