@@ -71,28 +71,22 @@
     "typescript": "^4.3.5"
   },
   "jest": {
-    "moduleDirectories": [
-      "node_modules",
-      "src"
-    ],
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "moduleFileExtensions": [
       "js",
       "json",
       "ts"
     ],
-    "roots": [
-      "src"
-    ],
+    "rootDir": "src",
     "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
-    "moduleNameMapper": {
-      "src/(.*)": "<rootDir>/src/$1"
-    },
-    "coveragePathIgnorePatterns":[
+    "coveragePathIgnorePatterns": [
       "node_modules",
       ".entity.ts",
       ".constants.ts"
