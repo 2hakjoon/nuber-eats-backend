@@ -3,15 +3,16 @@ import * as jwt from 'jsonwebtoken';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import { JwtService } from './jwt.service';
 
-jest.mock('jsonwebtoken', () => {
-  return {
-    sign: jest.fn(() => TOKEN),
-    verify: jest.fn(() => {}),
-  };
-});
 const TOKEN = 'TOKEN';
 const TEST_KEY = 'testKey';
 const ID = 1;
+
+jest.mock('jsonwebtoken', () => {
+  return {
+    sign: jest.fn(() => TOKEN),
+    verify: jest.fn(() => ({ id: ID })),
+  };
+});
 
 describe('JwtService', () => {
   let service: JwtService;
@@ -38,5 +39,12 @@ describe('JwtService', () => {
       expect(jwt.sign).toHaveBeenCalledWith({ id: ID }, TEST_KEY);
     });
   });
-  it.todo('verify');
+  describe('verify', () => {
+    it('should retrun the decoded token', () => {
+      const decoded = service.verify(TOKEN);
+      expect(decoded).toEqual({ id: ID });
+      expect(jwt.verify).toHaveBeenCalledTimes(1);
+      expect(jwt.verify).toHaveBeenCalledWith(TOKEN, TEST_KEY);
+    });
+  });
 });
