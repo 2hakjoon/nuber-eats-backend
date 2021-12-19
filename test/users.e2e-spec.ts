@@ -207,7 +207,6 @@ describe('AppController (e2e)', () => {
         })
         .expect(200)
         .expect((res) => {
-          console.log(res.body.data);
           const {
             body: {
               data: {
@@ -221,7 +220,7 @@ describe('AppController (e2e)', () => {
         });
     });
   });
-  describe('verifyEmail', () => {
+  describe('me', () => {
     it('should find my profile', () => {
       return request(app.getHttpServer())
         .post(GRAPHQL_ENDPOINT)
@@ -265,6 +264,61 @@ describe('AppController (e2e)', () => {
         });
     });
   });
-  it.todo('me');
-  it.todo('editProfile');
+  describe('editProfile', () => {
+    const NEW_EMAIL = 'test@naver.com';
+    it('should change email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('x-jwt', token)
+        .send({
+          query: `
+          mutation{
+            editProfile(input:{
+              email:"${NEW_EMAIL}",
+              password:"11"
+            }){
+              ok
+              error
+            }
+        }
+          `,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                editProfile: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+        });
+    });
+    it('should have new email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('x-jwt', token)
+        .send({
+          query: `{
+            me{
+              email
+            }
+          }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: {
+                me: { email },
+              },
+            },
+          } = res;
+          expect(email).toBe(NEW_EMAIL);
+        });
+    });
+  });
+  it.todo('verifyEmail');
 });

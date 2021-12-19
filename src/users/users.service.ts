@@ -92,7 +92,7 @@ export class UsersService {
   }
   async findUserById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOneOrFail({ id });
+      const user = await this.users.findOneOrFail(id);
       return {
         ok: true,
         user,
@@ -117,7 +117,13 @@ export class UsersService {
         user.email = email;
         //이메일 수정시 검증코드 생성
         user.emailVerified = false;
-        const verification = await this.verification.create();
+        await this.verification.delete({ user: { id: user.id } });
+        const verification = await this.verification.save(
+          this.verification.create({
+            user,
+          }),
+        );
+        console.log(verification);
         this.mailService.sendVerificationEmail(user.email, verification.code);
       }
       //인자에 비밀번호가 있을시
@@ -130,6 +136,7 @@ export class UsersService {
         ok: true,
       };
     } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: "Couldn't edit profile",
