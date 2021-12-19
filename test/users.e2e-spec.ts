@@ -4,6 +4,12 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { getConnection } from 'typeorm';
 
+jest.mock('got', () => {
+  return {
+    post: jest.fn(),
+  };
+});
+
 const GRAPHQL_ENDPOINT = '/graphql';
 
 describe('AppController (e2e)', () => {
