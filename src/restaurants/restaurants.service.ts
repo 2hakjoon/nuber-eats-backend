@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EditProfileOutput } from 'src/users/dtos/edit-profile.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
 } from './dtos/create-restaurant.dto';
-import { EditRestaurantInput } from './dtos/edit-restaurant.dot';
+import {
+  EditRestaurantInput,
+  EditRestaurantOutput,
+} from './dtos/edit-restaurant.dot';
 import { Category } from './entities/category.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { CategoryRepository } from './repositories/category.repository';
@@ -50,7 +52,7 @@ export class RestaurantService {
   async editRestaurant(
     owner: User,
     editRestaurantInput: EditRestaurantInput,
-  ): Promise<EditProfileOutput> {
+  ): Promise<EditRestaurantOutput> {
     try {
       const restaurant = await this.restaurants.findOne(
         editRestaurantInput.restaurantId,
@@ -66,22 +68,24 @@ export class RestaurantService {
             ok: false,
             error: "You can't edit a restaurant that you don't own",
           };
+        } else {
+          let category: Category = null;
+
+          if (editRestaurantInput.categoryName) {
+            category = await this.categories.getOrCreate(
+              editRestaurantInput.categoryName,
+            );
+          }
+          await this.restaurants.save([
+            {
+              id: editRestaurantInput.restaurantId,
+              ...editRestaurantInput,
+              ...(category && { category }),
+            },
+          ]);
+          return { ok: true };
         }
-        let category: Category = null;
-        if (editRestaurantInput.categoryName) {
-          category = await this.categories.getOrCreate(
-            editRestaurantInput.categoryName,
-          );
-        }
-        await this.restaurants.save([
-          {
-            id: editRestaurantInput.restaurantId,
-            ...editRestaurantInput,
-            ...(category && { category }),
-          },
-        ]);
       }
-      return { ok: true };
     } catch (e) {
       return {
         ok: false,
