@@ -65,6 +65,20 @@ export class RestaurantResolver {
       deleteRestaurantInput,
     );
   }
+
+  @Query((type) => RestaurantsOutput)
+  async allRestaurants(
+    @Args('input') restaurantsInput: RestaurantsInput,
+  ): Promise<RestaurantsOutput> {
+    return this.restaurantService.allRestaurants(restaurantsInput);
+  }
+
+  @Query((type) => RestaurantOutput)
+  async restaurant(
+    @Args('input') restaurantInput: RestaurantInput,
+  ): Promise<RestaurantOutput> {
+    return this.restaurantService.findRestaurantById(restaurantInput);
+  }
 }
 
 @Resolver((of) => Category)
@@ -86,19 +100,5 @@ export class CategoryResolver {
     @Args('input') categoryInput: CategoryInput,
   ): Promise<CategoryOutput> {
     return this.restaurantService.findCategoryBySlug(categoryInput);
-  }
-
-  @Query((type) => RestaurantsOutput)
-  async allRestaurants(
-    @Args('input') restaurantsInput: RestaurantsInput,
-  ): Promise<RestaurantsOutput> {
-    return this.restaurantService.allRestaurants(restaurantsInput);
-  }
-
-  @Query((type) => RestaurantOutput)
-  async restaurant(
-    @Args('input') restaurantInput: RestaurantInput,
-  ): Promise<RestaurantOutput> {
-    return this.restaurantService.findRestaurantById(restaurantInput);
   }
 }
