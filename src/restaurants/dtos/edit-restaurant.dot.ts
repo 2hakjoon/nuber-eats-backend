@@ -9,4 +9,4 @@ export class EditRestaurantInput extends PartialType(CreateRestaurantInput) {
 }
 
 @ObjectType()
-export class EditRestaurantOutput extends CoreOutput {}
+export class EditRestaurantsOutput extends CoreOutput {}

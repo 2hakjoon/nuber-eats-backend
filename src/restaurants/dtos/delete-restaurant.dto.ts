@@ -8,4 +8,4 @@ export class DeleteRestaurantInput {
 }
 
 @ObjectType()
-export class DeleteRestaurantOutput extends CoreOutput {}
+export class DeleteRestaurantsOutput extends CoreOutput {}

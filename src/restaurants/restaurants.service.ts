@@ -6,17 +6,18 @@ import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryOutput } from './dtos/category.dto';
 import {
   CreateRestaurantInput,
-  CreateRestaurantOutput,
+  CreateRestaurantsOutput,
 } from './dtos/create-restaurant.dto';
 import {
   DeleteRestaurantInput,
-  DeleteRestaurantOutput,
+  DeleteRestaurantsOutput,
 } from './dtos/delete-restaurant.dto';
 import {
   EditRestaurantInput,
-  EditRestaurantOutput,
+  EditRestaurantsOutput,
 } from './dtos/edit-restaurant.dot';
-import { RestaurantOutput, RestaurantsInput } from './dtos/restaurants.dto';
+import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
+import { RestaurantsOutput, RestaurantsInput } from './dtos/restaurants.dto';
 import { Category } from './entities/category.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { CategoryRepository } from './repositories/category.repository';
@@ -32,7 +33,7 @@ export class RestaurantService {
   async createRestaurant(
     owner: User,
     createRestaurantInput: CreateRestaurantInput,
-  ): Promise<CreateRestaurantOutput> {
+  ): Promise<CreateRestaurantsOutput> {
     console.log(owner);
     try {
       const newRestaurant = this.restaurants.create(createRestaurantInput);
@@ -59,7 +60,7 @@ export class RestaurantService {
   async editRestaurant(
     owner: User,
     editRestaurantInput: EditRestaurantInput,
-  ): Promise<EditRestaurantOutput> {
+  ): Promise<EditRestaurantsOutput> {
     try {
       const restaurant = await this.restaurants.findOne(
         editRestaurantInput.restaurantId,
@@ -104,7 +105,7 @@ export class RestaurantService {
   async deleteRestaurant(
     owner: User,
     deleteRestaurantInput: DeleteRestaurantInput,
-  ): Promise<DeleteRestaurantOutput> {
+  ): Promise<DeleteRestaurantsOutput> {
     try {
       const restaurant = await this.restaurants.findOne(
         deleteRestaurantInput.restaurantId,
@@ -186,7 +187,7 @@ export class RestaurantService {
     }
   }
 
-  async allRestaurants({ page }: RestaurantsInput): Promise<RestaurantOutput> {
+  async allRestaurants({ page }: RestaurantsInput): Promise<RestaurantsOutput> {
     try {
       const [restaurants, totalResults] = await this.restaurants.findAndCount({
         take: 5,
@@ -202,6 +203,30 @@ export class RestaurantService {
       return {
         ok: false,
         error: 'Could not load restaurants',
+      };
+    }
+  }
+
+  async findRestaurantById({
+    restaurantId,
+  }: RestaurantInput): Promise<RestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne({ id: restaurantId });
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'No restaurant found',
+        };
+      } else {
+        return {
+          ok: true,
+          restaurant,
+        };
+      }
+    } catch (e) {
+      return {
+        ok: false,
+        error: "Couldn't find restaurant",
       };
     }
   }

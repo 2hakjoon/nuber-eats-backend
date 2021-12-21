@@ -13,17 +13,18 @@ import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import {
   CreateRestaurantInput,
-  CreateRestaurantOutput,
+  CreateRestaurantsOutput,
 } from './dtos/create-restaurant.dto';
 import {
   DeleteRestaurantInput,
-  DeleteRestaurantOutput,
+  DeleteRestaurantsOutput,
 } from './dtos/delete-restaurant.dto';
 import {
   EditRestaurantInput,
-  EditRestaurantOutput,
+  EditRestaurantsOutput,
 } from './dtos/edit-restaurant.dot';
-import { RestaurantOutput, RestaurantsInput } from './dtos/restaurants.dto';
+import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
+import { RestaurantsOutput, RestaurantsInput } from './dtos/restaurants.dto';
 import { Category } from './entities/category.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { RestaurantService } from './restaurants.service';
@@ -32,33 +33,33 @@ import { RestaurantService } from './restaurants.service';
 export class RestaurantResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  @Mutation((returns) => CreateRestaurantOutput)
+  @Mutation((returns) => CreateRestaurantsOutput)
   @Role(['Owner'])
   createRestaurant(
     @AuthUser() authUser: User,
     @Args('input') createRestaurantInput: CreateRestaurantInput,
-  ): Promise<CreateRestaurantOutput> {
+  ): Promise<CreateRestaurantsOutput> {
     return this.restaurantService.createRestaurant(
       authUser,
       createRestaurantInput,
     );
   }
 
-  @Mutation((returns) => EditRestaurantOutput)
+  @Mutation((returns) => EditRestaurantsOutput)
   @Role(['Owner'])
   editRestaurant(
     @AuthUser() authUser: User,
     @Args('input') editRestaurantInput: EditRestaurantInput,
-  ): Promise<EditRestaurantOutput> {
+  ): Promise<EditRestaurantsOutput> {
     return this.restaurantService.editRestaurant(authUser, editRestaurantInput);
   }
 
-  @Mutation((returns) => DeleteRestaurantOutput)
+  @Mutation((returns) => DeleteRestaurantsOutput)
   @Role(['Owner'])
   deleteRestaurant(
     @AuthUser() AuthUser: User,
     @Args('input') deleteRestaurantInput: DeleteRestaurantInput,
-  ): Promise<DeleteRestaurantOutput> {
+  ): Promise<DeleteRestaurantsOutput> {
     return this.restaurantService.deleteRestaurant(
       AuthUser,
       deleteRestaurantInput,
@@ -87,10 +88,17 @@ export class CategoryResolver {
     return this.restaurantService.findCategoryBySlug(categoryInput);
   }
 
-  @Query((type) => RestaurantOutput)
+  @Query((type) => RestaurantsOutput)
   async allRestaurants(
     @Args('input') restaurantsInput: RestaurantsInput,
-  ): Promise<RestaurantOutput> {
+  ): Promise<RestaurantsOutput> {
     return this.restaurantService.allRestaurants(restaurantsInput);
+  }
+
+  @Query((type) => RestaurantOutput)
+  async restaurant(
+    @Args('input') restaurantInput: RestaurantInput,
+  ): Promise<RestaurantOutput> {
+    return this.restaurantService.findRestaurantById(restaurantInput);
   }
 }
