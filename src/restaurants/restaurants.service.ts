@@ -16,7 +16,7 @@ import {
   EditRestaurantInput,
   EditRestaurantOutput,
 } from './dtos/edit-restaurant.dot';
-import { RestaurantOutput, RestaurantsInput } from './dtos/restaurant.dto';
+import { RestaurantOutput, RestaurantsInput } from './dtos/restaurants.dto';
 import { Category } from './entities/category.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { CategoryRepository } from './repositories/category.repository';
