@@ -83,6 +83,6 @@ export class CategoryResolver {
   async category(
     @Args('input') categoryInput: CategoryInput,
   ): Promise<CategoryOutput> {
-    return this.restaurantService.findCategoryBySlug(categoryInput.slug);
+    return this.restaurantService.findCategoryBySlug(categoryInput);
   }
 }
