@@ -16,7 +16,7 @@ class DishChoice {
 
 @InputType('DishOptionInputType', { isAbstract: true })
 @ObjectType()
-class DishOption {
+export class DishOption {
   @Field((type) => String)
   name: string;
 
@@ -32,7 +32,7 @@ class DishOption {
 @Entity()
 export class Dish extends CoreEntity {
   @Field((type) => String)
-  @Column({ unique: true })
+  @Column()
   @IsString()
   name: string;
 
