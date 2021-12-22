@@ -3,7 +3,7 @@ import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Order, OrderStatus } from '../entities/order.entity';
 
 @InputType()
-export class GetOrdersInpuType {
+export class GetOrdersInput {
   @Field((type) => OrderStatus, { nullable: true })
   status: OrderStatus;
 }
