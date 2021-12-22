@@ -34,18 +34,17 @@ export class UsersService {
       const exists = await this.users.findOne({ email });
       if (exists) {
         return { ok: false, error: 'There is a user with that email already' };
-      } else {
-        const user = await this.users.save(
-          this.users.create({ email, password, role }),
-        );
-        const verification = await this.verification.save(
-          this.verification.create({
-            user,
-          }),
-        );
-        this.mailService.sendVerificationEmail(user.email, verification.code);
-        return { ok: true };
       }
+      const user = await this.users.save(
+        this.users.create({ email, password, role }),
+      );
+      const verification = await this.verification.save(
+        this.verification.create({
+          user,
+        }),
+      );
+      this.mailService.sendVerificationEmail(user.email, verification.code);
+      return { ok: true };
     } catch (e) {
       console.log(e);
       return { ok: false, error: "Couldn't create account" };
@@ -67,22 +66,20 @@ export class UsersService {
           ok: false,
           error: 'User not found',
         };
-      } else {
-        const passwordCorrect = await user.checkPassword(password);
-        if (!passwordCorrect) {
-          return {
-            ok: false,
-            error: 'Wrong password',
-          };
-        } else {
-          const token = this.jwtService.sign(user.id);
-          return {
-            ok: true,
-            token: token,
-            error: null,
-          };
-        }
       }
+      const passwordCorrect = await user.checkPassword(password);
+      if (!passwordCorrect) {
+        return {
+          ok: false,
+          error: 'Wrong password',
+        };
+      }
+      const token = this.jwtService.sign(user.id);
+      return {
+        ok: true,
+        token: token,
+        error: null,
+      };
     } catch (e) {
       return {
         ok: false,
@@ -157,12 +154,11 @@ export class UsersService {
         return {
           ok: true,
         };
-      } else {
-        return {
-          ok: false,
-          error: 'Wrong email code',
-        };
       }
+      return {
+        ok: false,
+        error: 'Wrong email code',
+      };
     } catch (e) {
       return {
         ok: false,
