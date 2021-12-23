@@ -56,7 +56,12 @@ export class OrderResolver {
     return this.orderService.editOrder(user, editOrderInput);
   }
 
-  @Subscription((returns) => Order)
+  @Subscription((returns) => Order, {
+    filter: (payload, _, context) => {
+      console.log(payload);
+      return true;
+    },
+  })
   @Role(['Owner'])
   async pendingOrders() {
     return this.pubsub.asyncIterator(NEW_PENDING_ORDER);
