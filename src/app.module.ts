@@ -60,6 +60,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
         Dish,
         Order,
         OrderItem,
+        CommonModule,
       ],
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
