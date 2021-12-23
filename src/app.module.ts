@@ -40,11 +40,16 @@ import { OrderItem } from './orders/entities/order-item.entity';
     GraphQLModule.forRoot({
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
-      context: ({ req, connection }) => {
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams: any) => ({
+            token: connectionParams['x-jwt'],
+          }),
+        },
+      },
+      context: ({ req }) => {
         const TOKEN_KEY = 'x-jwt';
-        return {
-          token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY],
-        };
+        return { token: req.headers[TOKEN_KEY] };
       },
     }),
     TypeOrmModule.forRoot({
