@@ -18,6 +18,7 @@ import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entities/payment.entity';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { PaymentsModule } from './payments/payments.module';
         Order,
         OrderItem,
         CommonModule,
+        Payment,
       ],
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
