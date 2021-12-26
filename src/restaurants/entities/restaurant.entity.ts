@@ -51,8 +51,4 @@ export class Restaurant extends CoreEntity {
   @Field((type) => [Dish], { nullable: true })
   @OneToMany((type) => Dish, (dish) => dish.restaurant)
   menu: Dish[];
-
-  @Field((type) => [Payment], { nullable: true })
-  @OneToMany((type) => Payment, (payment) => payment.restaurant)
-  payment: Payment[];
 }

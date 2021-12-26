@@ -20,7 +20,7 @@ export class Payment extends CoreEntity {
   userId: number;
 
   @Field((Type) => Restaurant)
-  @ManyToOne((type) => Restaurant, (restaurant) => restaurant.payment)
+  @ManyToOne((type) => Restaurant)
   restaurant: User;
 
   @RelationId((payment: Payment) => payment.restaurant)
