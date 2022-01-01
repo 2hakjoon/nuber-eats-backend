@@ -19,7 +19,7 @@ export enum UserRole {
   Delivery = 'Delivery',
 }
 
-registerEnumType(UserRole, { name: 'UserRoll' });
+registerEnumType(UserRole, { name: 'UserRole' });
 
 @InputType('UserInputType', { isAbstract: true })
 @ObjectType()
