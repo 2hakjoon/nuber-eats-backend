@@ -98,7 +98,7 @@ export class RestaurantResolver {
 
   @Query((type) => MyRestaurantsOutput)
   @Role(['Owner'])
-  async myrestaurants(@AuthUser() owner: User): Promise<MyRestaurantsOutput> {
+  async myRestaurants(@AuthUser() owner: User): Promise<MyRestaurantsOutput> {
     return this.restaurantService.myRestaurants(owner);
   }
 }
