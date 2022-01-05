@@ -26,6 +26,7 @@ import {
   EditRestaurantInput,
   EditRestaurantsOutput,
 } from './dtos/edit-restaurant.dot';
+import { MyRestaurantsOutput } from './dtos/my-restaurants';
 import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
 import { RestaurantsOutput, RestaurantsInput } from './dtos/restaurants.dto';
 import {
@@ -93,6 +94,12 @@ export class RestaurantResolver {
     @Args('input') searchRestaurantInput: SearchRestaurantInput,
   ): Promise<SearchRestaurantOutput> {
     return this.restaurantService.findRestaurantByName(searchRestaurantInput);
+  }
+
+  @Query((type) => MyRestaurantsOutput)
+  @Role(['Owner'])
+  async myrestaurants(@AuthUser() owner: User): Promise<MyRestaurantsOutput> {
+    return this.restaurantService.myRestaurants(owner);
   }
 }
 

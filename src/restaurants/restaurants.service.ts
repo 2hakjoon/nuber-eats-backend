@@ -19,6 +19,7 @@ import {
   EditRestaurantInput,
   EditRestaurantsOutput,
 } from './dtos/edit-restaurant.dot';
+import { MyRestaurantsOutput } from './dtos/my-restaurants';
 import { RestaurantInput, RestaurantOutput } from './dtos/restaurant.dto';
 import { RestaurantsOutput, RestaurantsInput } from './dtos/restaurants.dto';
 import {
@@ -153,6 +154,21 @@ export class RestaurantService {
       return {
         ok: false,
         error: "Couldn't load categories",
+      };
+    }
+  }
+
+  async myRestaurants({ id }: User): Promise<MyRestaurantsOutput> {
+    try {
+      const restaurants = await this.restaurants.find({ ownerId: id });
+      return {
+        ok: true,
+        restaurants,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: 'Could not find your restaurants',
       };
     }
   }
