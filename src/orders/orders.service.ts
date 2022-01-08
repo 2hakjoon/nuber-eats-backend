@@ -99,6 +99,7 @@ export class OrderService {
       });
       return {
         ok: true,
+        orderId: order.id,
       };
     } catch (e) {
       return {
@@ -157,7 +158,7 @@ export class OrderService {
 
     if (user.role === UserRole.Client && order.customerId !== user.id)
       canSee = false;
-    if (user.role === UserRole.Delivery && order.customerId !== user.id)
+    if (user.role === UserRole.Delivery && order.driverId !== user.id)
       canSee = false;
     if (user.role === UserRole.Owner && order.restaurant.ownerId !== user.id)
       canSee = false;

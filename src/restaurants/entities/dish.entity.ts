@@ -53,7 +53,7 @@ export class Dish extends CoreEntity {
   description: string;
 
   @Field((type) => Restaurant, { nullable: true })
-  @ManyToOne((type) => Restaurant, (restaurant) => restaurant.menu, {
+  @ManyToOne((type) => Restaurant, (restaurant) => restaurant.menus, {
     onDelete: 'CASCADE',
   })
   restaurant: Restaurant;
